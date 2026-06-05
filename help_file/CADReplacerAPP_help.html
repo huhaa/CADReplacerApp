@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAD文字批量替换工具 - 帮助文档</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <aside id="toc-sidebar">
+            <h3>目录</h3>
+            <div id="toc-container"></div>
+        </aside>
+
+        <main class="content">
+            <header>
+                <h1>CAD文字批量替换工具 帮助文档</h1>
+                <div class="meta-info">
+                    <span>作者：DHB</span>
+                    <span>版本：V2.0</span>
+                    <span>更新日期：2026年06月04日</span>
+                </div>
+            </header>
+
+            <section id="section-overview">
+                <h2>界面概览</h2>
+                <p>V2.0 全新重构，采用左右分栏布局：左侧为替换规则列表，右侧为待处理文件列表，操作更加直观高效。</p>
+                <img src="..\\pictures\\interface.png" alt="软件界面示意图">
+            </section>
+
+            <section id="section-features">
+                <h2>核心功能</h2>
+                <p class="highlight">支持对以下文字类型进行批量查找替换：</p>
+                <ul>
+                    <li><strong>普通文字</strong> — 单行文字 (AcDbText)</li>
+                    <li><strong>多行文字</strong> — 多行文字 (AcDbMText)</li>
+                    <li><strong>块属性</strong> — 块引用中的属性文字 (AcDbAttribute)</li>
+                    <li><strong>嵌套块</strong> — 递归处理嵌套块内的文字</li>
+                    <li><strong>布局</strong> — 同时处理图纸空间（布局）中的文字</li>
+                </ul>
+                <div class="note">
+                    ✅ V2.0 新增：支持正则表达式匹配、区分大小写开关<br>
+                    ✅ V2.0 新增：撤销上次替换操作<br>
+                    ✅ V2.0 新增：处理中可随时取消
+                </div>
+            </section>
+
+            <section id="section-guide">
+                <h2>使用指南</h2>
+                <p>假设需要对一套或多套图纸进行批量文字替换，替换规则如下图所示：</p>
+                <img src="..\\pictures\\a-01.png" alt="批量替换示例">
+
+                <div class="steps">
+                    <h3>操作步骤</h3>
+                    <p><strong>1. 添加替换规则</strong> — 在「查找」输入框输入原始文字，在「替换」输入框输入目标文字。可选勾选「正则」启用正则表达式匹配，勾选「大小写」区分大小写。点击「添加规则」按钮。</p>
+                    <p><strong>2. 选择替换范围</strong> — 根据需要勾选要处理的文字类型：普通文字、多行文字、块属性、嵌套块、布局。默认全部勾选。</p>
+                    <p><strong>3. 添加文件</strong> — 点击右侧「添加文件」按钮选择 DWG 图纸，支持多选。可点击「删除选中文件」移除不需要的文件。</p>
+                    <p><strong>4. 统计（可选）</strong> — 点击「统计」按钮可预览当前规则和文件数量，确认无误后再处理。</p>
+                    <p><strong>5. 开始替换</strong> — 点击「🚀 开始替换」按钮启动批量处理。处理过程中按钮变为红色「⏹ 取消」，可随时点击取消。</p>
+                    <p><strong>6. 撤销（可选）</strong> — 替换完成后如需恢复，点击「↩ 撤销上次」按钮可将文件还原。</p>
+                </div>
+
+                <img src="..\\pictures\\a-02.png" alt="操作界面示意图">
+                <img src="..\\pictures\\a-03.png" alt="执行结果示意图">
+            </section>
+
+            <section id="section-notes">
+                <h2>注意事项</h2>
+                <div class="note">
+                    <p>⚠️ 重要提示：</p>
+                    <ol>
+                        <li>批量替换依赖 AutoCAD COM 接口，处理前请确保 AutoCAD 已安装并可正常打开</li>
+                        <li>处理过程中请勿手动操作 AutoCAD，避免 COM 冲突</li>
+                        <li>每个文件替换完成后会自动保存，处理前建议备份原文件</li>
+                        <li>执行完成后请检查 <code>error.log</code> 日志文件，确认是否有处理失败的文件</li>
+                        <li>如有文件处理失败（红色标记），可尝试重新执行替换操作</li>
+                        <li>部分失败可能是 AutoCAD 启动较慢导致，建议替换前先手动打开 AutoCAD</li>
+                        <li>撤销功能仅对最近一次替换操作有效，关闭程序后无法撤销</li>
+                    </ol>
+                </div>
+                <p>日志文件记录了替换操作的详细信息，可帮助定位问题，如下图所示：</p>
+                <img src="..\\pictures\\a-04.png" alt="日志文件示意图">
+            </section>
+
+            <section id="section-shortcuts">
+                <h2>快捷操作</h2>
+                <ul>
+                    <li><strong>多选规则/文件</strong> — 按住 Ctrl 或 Shift 点击可多选，方便批量删除</li>
+                    <li><strong>连续失败保护</strong> — 连续3个文件处理失败时会弹窗询问是否继续</li>
+                    <li><strong>配置记忆</strong> — 替换规则和文件列表会自动保存，下次启动时恢复</li>
+                </ul>
+            </section>
+
+            <footer>
+                <p>技术支持与反馈：<a href="mailto:dhbmatrix@outlook.com">dhbmatrix@outlook.com</a></p>
+                <p>🙏 如果本工具对您有帮助，欢迎通过打赏支持开发者</p>
+            </footer>
+        </main>
+    </div>
+
+    <script src="toc-generator.js"></script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+{
+  "rules": [
+    {
+      "find_text": "张三",
+      "replace_text": "李四",
+      "use_regex": false,
+      "case_sensitive": true,
+      "rule_id": "00000000"
+    }
+  ],
+  "scope": {
+    "text": true,
+    "mtext": true,
+    "attribute": true,
+    "paper_space": true,
+    "nested_blocks": true
+  },
+  "last_files": [
+    "C:/path/to/your/drawing1.dwg",
+    "C:/path/to/your/drawing2.dwg"
+  ],
+  "window_geometry": {}
+}
