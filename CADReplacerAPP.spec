@@ -1,14 +1,18 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 a = Analysis(
-    ['src/main.py'],
+    ['run.py'],
     pathex=[],
     binaries=[],
     datas=[
         ('pictures', 'pictures'),
         ('help_file', 'help_file'),
     ],
-    hiddenimports=['pythoncom', 'win32com.client'],
+    hiddenimports=[
+        'pythoncom',
+        'win32com.client',
+        'win32com.client.dynamic',
+    ],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -24,7 +28,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='CADReplacerAPP',
+    name='CADReplacerAPP_V2.0.3',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,

@@ -9,11 +9,20 @@ from PySide6.QtWidgets import QApplication
 from .model import ReplacerModel
 from .view import MainView
 from .presenter import ReplacerPresenter
+from .version import __version__
+from .update_checker import check_update
+
+
+def app_dir():
+    """返回可写目录：冻结后为 EXE 所在目录，否则为项目根。"""
+    if getattr(sys, "frozen", False):
+        return os.path.dirname(sys.executable)
+    return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 def setup_logging():
     """配置日志：按模块 + 轮转文件。"""
-    log_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    log_dir = app_dir()
     log_path = os.path.join(log_dir, "error.log")
 
     handler = RotatingFileHandler(
@@ -40,8 +49,8 @@ def main():
     setup_logging()
     logger = logging.getLogger(__name__)
 
-    # 确保工作目录为项目根
-    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    # 确保工作目录为可写目录（冻结后为 EXE 目录，否则项目根）
+    project_root = app_dir()
     os.chdir(project_root)
 
     app = QApplication(sys.argv)
@@ -55,7 +64,13 @@ def main():
 
     view.show()
 
-    logger.info("CADReplacerApp V2 启动")
+    logger.info("CADReplacerApp V%s 启动", __version__)
+
+    # 启动后异步检查更新
+    has_update, latest_version, download_url = check_update()
+    if has_update:
+        view.show_update_dialog(latest_version, download_url)
+
     sys.exit(app.exec())
 
 

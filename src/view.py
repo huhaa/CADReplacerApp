@@ -14,6 +14,7 @@ from PySide6.QtCore import Signal, Qt, QObject
 from PySide6.QtGui import QAction, QColor, QIcon
 
 from .model import ReplaceRule, ScopeConfig, FileStatus, FileResult
+from .version import __version__
 
 logger = logging.getLogger(__name__)
 
@@ -76,6 +77,10 @@ class IMainView(metaclass=QtABCMeta):
     @abstractmethod
     def ask_confirmation(self, title: str, message: str) -> bool: ...
 
+    # 更新检查
+    @abstractmethod
+    def show_update_dialog(self, version: str, url: str): ...
+
 
 # ─── Qt 信号总线 ──────────────────────────────────────────────────
 
@@ -105,7 +110,7 @@ class MainView(QMainWindow, IMainView):
         self._setup_style()
 
     def _setup_window(self):
-        self.setWindowTitle("AutoCAD批量文字替换工具 V2.0")
+        self.setWindowTitle(f"AutoCAD批量文字替换工具 V{__version__}")
         # Resolve project root: src/view.py -> src/ -> project root
         project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         icon_path = os.path.join(project_root, "pictures", "DHB.png")
@@ -576,6 +581,16 @@ class MainView(QMainWindow, IMainView):
         return QMessageBox.question(
             self, title, message,
             QMessageBox.Yes | QMessageBox.No) == QMessageBox.Yes
+
+    def show_update_dialog(self, version: str, url: str):
+        """弹出更新提示对话框。"""
+        reply = QMessageBox.question(
+            self, "发现新版本",
+            f"检测到新版本 V{version}，是否前往下载？",
+            QMessageBox.Yes | QMessageBox.No,
+        )
+        if reply == QMessageBox.Yes:
+            webbrowser.open(url)
 
     # ─── 私有辅助 ──────────────────────────────────────────────
 

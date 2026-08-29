@@ -6,7 +6,16 @@ import time
 
 import pythoncom
 import win32com.client
+from win32com.client import dynamic as _dynamic
 from PySide6.QtCore import QThread, Signal
+
+
+def _dyn(obj):
+    """强制动态分发，绕过 gen_py 早期绑定接口缺成员(GetAttributes/TextString)的问题。"""
+    try:
+        return _dynamic.Dispatch(obj)
+    except Exception:
+        return obj
 
 from .model import ReplaceRule, ReplaceRecord, ScopeConfig, FileStatus
 
@@ -176,6 +185,7 @@ class CADWorker(QThread):
         for entity in space:
             if self._cancel_flag:
                 break
+            entity = _dyn(entity)
             obj_name = self._safe_get_obj_name(entity)
             if obj_name in ("AcDbText", "AcDbMText"):
                 c = self._apply_rules_to_entity(entity, file_path, records)
@@ -189,17 +199,20 @@ class CADWorker(QThread):
                            records: list) -> int:
         """处理块引用，递归进入嵌套块。"""
         count = 0
+        block_ref = _dyn(block_ref)
         try:
             for attrib in block_ref.GetAttributes():
-                c = self._apply_rules_to_entity(attrib, file_path, records)
+                c = self._apply_rules_to_entity(
+                    _dyn(attrib), file_path, records)
                 count += c
         except Exception as e:
-            logger.debug(f"块引用属性处理失败: {e}")
+            logger.warning(f"块引用属性处理失败: {e}")
 
         # 递归处理嵌套块
         if self._scope and self._scope.nested_blocks:
             try:
                 for entity in block_ref:
+                    entity = _dyn(entity)
                     obj_name = self._safe_get_obj_name(entity)
                     if obj_name in ("AcDbText", "AcDbMText"):
                         c = self._apply_rules_to_entity(
@@ -217,6 +230,7 @@ class CADWorker(QThread):
     def _apply_rules_to_entity(self, entity, file_path: str,
                                 records: list) -> int:
         """对单个实体应用所有规则，返回替换次数。"""
+        entity = _dyn(entity)
         try:
             text = entity.TextString
             if not text:
@@ -279,6 +293,6 @@ class CADWorker(QThread):
     def _safe_get_obj_name(entity) -> str:
         """安全获取实体对象名。"""
         try:
-            return entity.ObjectName or ""
+            return _dyn(entity).ObjectName or ""
         except Exception:
             return ""
